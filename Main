@@ -1,0 +1,163 @@
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Scanner;
+
+public class Main {
+    public static ArrayList<Album> albumList = new ArrayList<>();
+    public static LinkedList<Song> playlist = new LinkedList<>();
+    public static Scanner scanner = new Scanner (System.in);
+    public static boolean movingForward = true;
+
+
+    public static void main(String[] args) {
+        Album album = new Album ("Album 1");
+        album.addSong("First song", 2.54);
+        album.addSong("Second song", 3.14);
+        album.addSong("Third song", 2.50);
+        album.addSong("Fourth song", 14.52);
+        album.addSong("Fifth song", 1.12);
+        album.addSong("Sixth song", 8.12);
+        albumList.add(album);
+        album = new Album ("Album 2");
+        album.addSong("2.First song", 2.54);
+        album.addSong("2.Second song", 2.54);
+        album.addSong("2.Third song", 2.54);
+        album.addSong("2.Fourth song", 2.54);
+        album.addSong("2.Fifth song", 2.54);
+        album.addSong("2.Sixth song", 2.54);
+        albumList.add(album);
+
+        albumList.get(0).addToPlayList("First song", playlist);
+        albumList.get(0).addToPlayList(2, playlist);
+        albumList.get(0).addToPlayList(4, playlist);
+        albumList.get(0).addToPlayList(6, playlist);
+        albumList.get(0).addToPlayList("Seventh song", playlist);
+        albumList.get(0).addToPlayList("Third song", playlist);
+        albumList.get(1).addToPlayList(1, playlist);
+        albumList.get(1).addToPlayList(4, playlist);
+        albumList.get(1).addToPlayList(6, playlist);
+        albumList.get(1).addToPlayList(2, playlist);
+        albumList.get(1).addToPlayList(4, playlist);
+
+        musicBox();
+    }
+
+    public static void musicBox (){
+        ListIterator<Song> iterator = playlist.listIterator();
+        System.out.println("MusicBox");
+        System.out.println("Currently playing " + iterator.next().toString());
+        printInstrucion();
+        boolean running = true;
+        while (running){
+            int action;
+            action =scanner.nextInt();
+            scanner.nextLine();
+            switch (action){
+                case 0:
+                    printInstrucion();
+                    break;
+                case 1:
+                    if (movingForward){
+                        if (iterator.hasPrevious()){
+                            iterator.previous();
+                        }
+                        movingForward = false;
+                    }
+                    if (iterator.hasPrevious()){
+                        iterator.previous();
+                    } else {
+                        System.out.println("Start of the list!");
+                    }
+                    break;
+                case 2:
+                    if (movingForward){
+                        System.out.println("Currently playing " + iterator.previous().toString());
+                        movingForward = false;
+                    } else {
+                        System.out.println("Currently playing " + iterator.next().toString());
+                        movingForward = true;
+                    }
+                    break;
+                case 3:
+                    if (!movingForward){
+                        if (iterator.hasNext()){
+                            iterator.next();
+                        }
+                        movingForward = true;
+                    }
+                    if (iterator.hasNext()){
+                        System.out.println("Currently playing " + iterator.next().toString());
+                    } else {
+                        System.out.println("End of the list!");
+                    }
+
+                    break;
+                case 4:
+                    addSong();
+                    break;
+                case 5:
+                    if (playlist.size()>0){
+                        iterator.remove();
+                        System.out.println("Song removed!");
+                        if (iterator.hasPrevious()){
+                            System.out.println("Currently playing " + iterator.previous().toString());
+                        } else {
+                            System.out.println("Currently playing " + iterator.next().toString());
+                        }
+                    }
+                    break;
+                case 6:
+                    listSong();
+                    break;
+                case 7:
+                    System.out.println("Shutting down");
+                    running = false;
+                    break;
+            }
+        }
+
+    }
+
+    public static void printInstrucion (){
+        System.out.println("0 - show instruction");
+        System.out.println("1 - play previous song");
+        System.out.println("2 - replay current song");
+        System.out.println("3 - play next song");
+        System.out.println("4 - add another song to playlist");
+        System.out.println("5 - remove current song");
+        System.out.println("6 - show current playlist");
+        System.out.println("7 - quit");
+    }
+    
+    public static void addSong() {
+        System.out.println("Search for a song: ");
+        String songName = scanner.nextLine();
+
+        if (isInAlbum(songName)!= null) {
+            playlist.add(isInAlbum(songName));
+            System.out.println("Song successfully added!");
+        } else {
+            System.out.println("You don't own this song!");
+        }
+    }
+
+
+    public static void listSong(){
+        for (int i =0; i<playlist.size(); i++){
+            System.out.println(i + "# - " + playlist.get(i).getName() + ", " + playlist.get(i).getDuration());
+        }
+    }
+
+
+    public static Song isInAlbum(String song) {
+        for (Album album : albumList) {
+            for (int j = 0; j < album.getAlbum().size(); j++) {
+                if (album.getAlbum().get(j).getName().equals(song)) {
+                    return album.getAlbum().get(j);
+                }
+            }
+        }
+        return null;
+    }
