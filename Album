@@ -1,0 +1,57 @@
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+public class Album {
+
+    private String name;
+    private ArrayList <Song> album;
+
+    public Album(String name) {
+        this.name = name;
+        this.album = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ArrayList<Song> getAlbum() {
+        return album;
+    }
+
+    public void addSong (String title, double duration){
+        if (findSong (title) == null){
+            this.album.add(new Song (title, duration));
+        }
+    }
+
+    private Song findSong (String title){
+        for (Song checkedSong: this.album){
+            if(checkedSong.getName().equals(title)){
+                return checkedSong;
+            }
+        }
+        return null;
+    }
+
+    public void addToPlayList (int trackNumber, LinkedList<Song> playlist){
+        int index = trackNumber -1;
+        if ((index >= 0) && (index <= this.album.size())){
+            playlist.add(this.album.get(index));
+            return;
+        }
+        System.out.println("This album does not have a track" );
+    }
+
+    public void addToPlayList (String title, LinkedList <Song> playlist){
+        Song checkedSong = findSong(title);
+        if (checkedSong!= null){
+            playlist.add(checkedSong);
+            return;
+        }
+        System.out.println("This album does not have a track" );
+
+    }
+
+}
